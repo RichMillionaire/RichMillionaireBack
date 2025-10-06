@@ -4,6 +4,12 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+# Spring Boot sensitive files
+/src/main/resources/application.properties
+
+
+
+
 ### STS ###
 .apt_generated
 .classpath
@@ -30,4 +36,5 @@ build/
 !**/src/test/**/build/
 
 ### VS Code ###
+.env
 .vscode/
