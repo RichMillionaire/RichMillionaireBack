@@ -1,16 +1,16 @@
-package com.richmillionaire.richmillionaire.models;
+// package com.richmillionaire.richmillionaire.models;
 
-public class Block {
-    private String hash;
-    private String previousHash;
-    private String data;
-    private long timeStamp;
-    private int nonce;
+// public class Block {
+//     private String hash;
+//     private String previousHash;
+//     private String data;
+//     private long timeStamp;
+//     private int nonce;
  
-    public Block(String data, String previousHash, long timeStamp) {
-        this.data = data;
-        this.previousHash = previousHash;
-        this.timeStamp = timeStamp;
-        this.hash = calculateBlockHash();
-    }
-}
+//     public Block(String data, String previousHash, long timeStamp) {
+//         this.data = data;
+//         this.previousHash = previousHash;
+//         this.timeStamp = timeStamp;
+//         this.hash = calculateBlockHash();
+//     }
+// }
