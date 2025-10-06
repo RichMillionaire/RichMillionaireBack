@@ -1,4 +1,4 @@
-package com.richmillionaire.richmillionaire.models;
+// package com.richmillionaire.richmillionaire.models;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
