@@ -1,10 +1,4 @@
-// package com.richmillionaire.richmillionaire.models;
-
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+package com.richmillionaire.richmillionaire.models;
 
 public class Block {
     private String hash;
