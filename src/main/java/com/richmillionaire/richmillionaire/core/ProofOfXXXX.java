@@ -16,7 +16,7 @@ public class ProofOfXXXX {
             hash = HashUtil.calculateBlockHash(block);
         }
 
-        block.setHash(hash);
+        block.setCurrHash(hash);
         return hash;
     }
 
