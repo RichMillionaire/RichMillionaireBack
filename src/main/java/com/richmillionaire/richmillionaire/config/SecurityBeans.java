@@ -1,6 +1,6 @@
 package com.richmillionaire.richmillionaire.config;
 
-import com.richmillionaire.richmillionaire.dao.UserDao;
+import com.richmillionaire.richmillionaire.dao.UserDao; // ajout import
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

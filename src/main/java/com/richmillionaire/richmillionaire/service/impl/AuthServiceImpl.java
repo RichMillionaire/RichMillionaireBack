@@ -1,5 +1,6 @@
 package com.richmillionaire.richmillionaire.service.impl;
 
+import com.richmillionaire.richmillionaire.dao.RoleDao;
 import com.richmillionaire.richmillionaire.dao.UserDao;
 import com.richmillionaire.richmillionaire.dto.AuthRequest;
 import com.richmillionaire.richmillionaire.dto.AuthResponse;
@@ -14,10 +15,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-import jakarta.transaction.Transactional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -27,12 +26,10 @@ import java.util.stream.Collectors;
 public class AuthServiceImpl implements AuthService {
 
     private final UserDao userDao;
+    private final RoleDao roleDao;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
-
-    @PersistenceContext
-    private EntityManager entityManager;
 
     @Override
     public AuthResponse register(RegisterRequest request) {
@@ -45,10 +42,8 @@ public class AuthServiceImpl implements AuthService {
         }
 
         // Get default user role
-        RoleEntity userRole = entityManager.createQuery(
-                "SELECT r FROM RoleEntity r WHERE r.name = :roleName", RoleEntity.class)
-                .setParameter("roleName", "ROLE_USER")
-                .getSingleResult();
+        RoleEntity userRole = roleDao.findByName("ROLE_USER")
+                .orElseThrow(() -> new RuntimeException("Default role not found"));
 
         UserEntity user = UserEntity.builder()
                 .username(request.getUsername())
