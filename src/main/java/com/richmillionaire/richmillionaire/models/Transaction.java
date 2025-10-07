@@ -12,6 +12,7 @@ import java.security.spec.X509EncodedKeySpec;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Base64;
+import java.util.UUID;
 
 import com.google.gson.Gson;
 
@@ -37,7 +38,7 @@ public class Transaction implements Serializable {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private UUID id;
 
     // on travail en binaire pour signer et vérifeir les clés
     @Column(nullable = false, length = 2048)
