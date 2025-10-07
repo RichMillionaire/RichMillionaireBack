@@ -2,12 +2,10 @@ HELP.md
 target/
 .mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
-!**/src/test/**/target/
+!**/src/test/**/target
 
 # Spring Boot sensitive files
 /src/main/resources/application.properties
-
-
 
 
 ### STS ###
