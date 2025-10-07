@@ -97,9 +97,7 @@ public class AuthServiceImpl implements AuthService {
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
                 .enabled(user.getEnabled())
-                .roles(user.getRoles().stream()
-                        .map(RoleEntity::getName)
-                        .collect(Collectors.toSet()))
+                .role(user.getRoles() != null && !user.getRoles().isEmpty())
                 .createdAt(user.getCreatedAt())
                 .updatedAt(user.getUpdatedAt())
                 .build();
