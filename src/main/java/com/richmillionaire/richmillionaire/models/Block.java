@@ -1,54 +1,39 @@
 package com.richmillionaire.richmillionaire.models;
 
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Entity
+@Table(name = "block") // table name
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Block {
-    private String hash;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false, unique = true)
+    private String currHash;
+
+    @Column(nullable = false)
     private String previousHash;
+
+    @Column(nullable = false)
     private String data;
+
+    @Column(nullable = false)
     private long timeStamp;
+
+    @Column(nullable = false)
     private int nonce;
- 
-    public Block(String data, String previousHash, long timeStamp) {
-        this.data = data;
-        this.previousHash = previousHash;
-        this.timeStamp = timeStamp;
-    }
 
-    public String getHash() {
-        return hash;
-    }
-    public void setHash(String hash) {
-        this.hash = hash;
-    }
+    @Column(nullable = false)
+    private String minedBy;
 
-    
-    public String getPreviousHash() {
-        return previousHash;
-    }
-    public void setPreviousHash(String previousHash) {
-        this.previousHash = previousHash;
-    }
-
-    
-    public String getData() {
-        return data;
-    }
-    public void setData(String data) {
-        this.data = data;
-    }
-
-    
-    public long getTimeStamp() {
-        return timeStamp;
-    }
-    public void setTimestamp(long timeStamp) {
-        this.timeStamp = timeStamp;
-    }
-
-    
-    public int getNonce() {
-        return nonce;
-    }
-    public void setNonce(int nonce) {
-        this.nonce = nonce;
-    }
 }

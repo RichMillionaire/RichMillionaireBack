@@ -1,0 +1,32 @@
+### 1. Inscription d'un nouvel utilisateur
+POST http://localhost:8080/api/v1/auth/register
+Content-Type: application/json
+
+{
+  "username": "john_doe",
+  "email": "john@example.com",
+  "password": "password123",
+  "firstName": "John",
+  "lastName": "Doe"
+}
+
+### 2. Connexion avec le compte créé
+POST http://localhost:8080/api/v1/auth/login
+Content-Type: application/json
+
+{
+  "username": "john_doe",
+  "password": "password123"
+}
+
+### 3. Test endpoint public (sans token)
+GET http://localhost:8080/api/v1/test/public
+
+### 4. Obtenir les informations de l'utilisateur connecté
+GET http://localhost:8080/api/v1/auth/me
+Authorization: Bearer YOUR_JWT_TOKEN_HERE
+
+### 5. Test endpoint protégé (avec token)
+GET http://localhost:8080/api/v1/test/protected
+Authorization: Bearer YOUR_JWT_TOKEN_HERE
+
