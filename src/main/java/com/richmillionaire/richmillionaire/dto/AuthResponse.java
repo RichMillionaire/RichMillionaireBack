@@ -11,12 +11,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class AuthResponse {
 
-    private String token;
-    private String type = "Bearer";
+    private String message;
     private UserDto user;
 
-    public AuthResponse(String token, UserDto user) {
-        this.token = token;
+    public AuthResponse(UserDto user) {
+        this.message = "Authentication successful";
         this.user = user;
     }
 }

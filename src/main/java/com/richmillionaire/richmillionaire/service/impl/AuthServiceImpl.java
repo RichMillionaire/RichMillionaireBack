@@ -60,7 +60,11 @@ public class AuthServiceImpl implements AuthService {
         String jwtToken = jwtService.generateToken(user);
         UserDto userDto = convertToDto(user);
 
-        return new AuthResponse(jwtToken, userDto);
+        // Retourner le token dans le message pour que le controller puisse le mettre dans le cookie
+        return AuthResponse.builder()
+                .message(jwtToken)
+                .user(userDto)
+                .build();
     }
 
     @Override
@@ -78,7 +82,11 @@ public class AuthServiceImpl implements AuthService {
         String jwtToken = jwtService.generateToken(user);
         UserDto userDto = convertToDto(user);
 
-        return new AuthResponse(jwtToken, userDto);
+        // Retourner le token dans le message pour que le controller puisse le mettre dans le cookie
+        return AuthResponse.builder()
+                .message(jwtToken)
+                .user(userDto)
+                .build();
     }
 
     @Override
@@ -90,6 +98,11 @@ public class AuthServiceImpl implements AuthService {
     }
 
     private UserDto convertToDto(UserEntity user) {
+        // Vérifier si l'utilisateur a le rôle ADMIN
+        boolean isAdmin = user.getRoles() != null &&
+                user.getRoles().stream()
+                        .anyMatch(role -> "ROLE_ADMIN".equals(role.getName()));
+
         return UserDto.builder()
                 .id(user.getId())
                 .username(user.getUsername())
@@ -97,7 +110,7 @@ public class AuthServiceImpl implements AuthService {
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
                 .enabled(user.getEnabled())
-                .role(user.getRoles() != null && !user.getRoles().isEmpty())
+                .role(isAdmin)
                 .createdAt(user.getCreatedAt())
                 .updatedAt(user.getUpdatedAt())
                 .build();
