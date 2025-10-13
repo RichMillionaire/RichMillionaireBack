@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.richmillionaire.richmillionaire.models.Transaction;
-import com.richmillionaire.richmillionaire.service.TransactionService;
+import com.richmillionaire.richmillionaire.services.TransactionService;
 
 @CrossOrigin
 @RestController

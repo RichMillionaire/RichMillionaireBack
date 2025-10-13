@@ -1,4 +1,4 @@
-package com.richmillionaire.richmillionaire.service.impl;
+package com.richmillionaire.richmillionaire.services.impl;
 
 import java.util.List;
 
@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 
 import com.richmillionaire.richmillionaire.dao.WalletDAO;
 import com.richmillionaire.richmillionaire.models.Wallet;
-import com.richmillionaire.richmillionaire.service.WalletService;
+import com.richmillionaire.richmillionaire.services.WalletService;
 
 @Service
 public class WalletServiceImpl implements WalletService{

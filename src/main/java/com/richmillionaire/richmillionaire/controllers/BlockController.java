@@ -1,7 +1,7 @@
 package com.richmillionaire.richmillionaire.controllers;
 
 import com.richmillionaire.richmillionaire.models.Block;
-import com.richmillionaire.richmillionaire.service.BlockService;
+import com.richmillionaire.richmillionaire.services.BlockService;
 
 import java.util.List;
 
