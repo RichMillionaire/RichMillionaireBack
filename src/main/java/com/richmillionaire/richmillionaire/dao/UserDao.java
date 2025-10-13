@@ -1,14 +1,16 @@
 package com.richmillionaire.richmillionaire.dao;
 
-import com.richmillionaire.richmillionaire.entity.UserEntity;
+import java.util.Optional;
+import java.util.UUID;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
+import com.richmillionaire.richmillionaire.models.User;
 
 @Repository
-public interface UserDao extends JpaRepository<UserEntity, Long> {
-    Optional<UserEntity> findByUsername(String username);
+public interface UserDao extends JpaRepository<User, UUID> {
+    Optional<User> findByUsername(String username);
     boolean existsByUsername(String username);
     boolean existsByEmail(String email);
 }
