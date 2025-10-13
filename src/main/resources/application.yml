@@ -1,0 +1,40 @@
+spring:
+  application:
+    name: richmillionaire-auth
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/richmillionaire_db
+    username: postgres
+    password: Ronaldo10
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    open-in-view: false
+
+  flyway:
+    baseline-on-migrate: true
+    baseline-version: 0
+    locations: classpath:db/migration
+    enabled: true
+
+server:
+  port: 8080
+  servlet:
+    context-path: /api/v1
+
+jwt:
+  secret: 0584a3a94044434fef7731fa716c81165a6699ba8a8e68bd24a4dadca0e01874
+  expiration: 86400000
+  cookie-name: jwt-token
+
+logging:
+  level:
+    com.richmillionaire: DEBUG
+    org.springframework.security: DEBUG
