@@ -1,4 +1,4 @@
-package com.richmillionaire.richmillionaire.service.impl;
+package com.richmillionaire.richmillionaire.services.impl;
 
 import java.util.List;
 
@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 
 import com.richmillionaire.richmillionaire.dao.TransactionDAO;
 import com.richmillionaire.richmillionaire.models.Transaction;
-import com.richmillionaire.richmillionaire.service.TransactionService;
+import com.richmillionaire.richmillionaire.services.TransactionService;
 
 @Service
 public class TransactionServiceImpl implements TransactionService{

@@ -40,6 +40,10 @@ public class Wallet {
     @Column(nullable = false, length = 2048)
     private String privateKey;
 
+    @Column(nullable = false)
+    private Double balance = 0.0;
+
+
     public static final int KEY_SIZE = 2048;
 
     public Wallet() throws NoSuchAlgorithmException {
@@ -50,6 +54,7 @@ public class Wallet {
         Base64.Encoder encoder = Base64.getEncoder();
         this.publicKey = encoder.encodeToString(keyPair.getPublic().getEncoded());
         this.privateKey = encoder.encodeToString(keyPair.getPrivate().getEncoded());
+        this.balance = 0.0;
     }
 
     public Wallet(PublicKey pubKey, PrivateKey privKey) {

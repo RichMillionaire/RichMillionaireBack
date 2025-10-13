@@ -1,4 +1,4 @@
-package com.richmillionaire.richmillionaire.service;
+package com.richmillionaire.richmillionaire.services;
 
 import java.util.List;
 

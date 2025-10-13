@@ -1,4 +1,4 @@
-package com.richmillionaire.richmillionaire.service.impl;
+package com.richmillionaire.richmillionaire.services.impl;
 
 import java.util.List;
 
@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 
 import com.richmillionaire.richmillionaire.dao.BlockDAO;
 import com.richmillionaire.richmillionaire.models.Block;
-import com.richmillionaire.richmillionaire.service.BlockService;
+import com.richmillionaire.richmillionaire.services.BlockService;
 
 import jakarta.transaction.Transactional;
 
