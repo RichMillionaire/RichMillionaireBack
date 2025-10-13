@@ -37,21 +37,25 @@ import lombok.Setter;
 public class Transaction implements Serializable {
     
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
+    @Column(columnDefinition = "uuid")
     private UUID id;
 
-    // on travail en binaire pour signer et vérifeir les clés
-    @Column(nullable = false, length = 2048)
+   // on travail en binaire pour signer et vérifier les clés
+    @Lob
+    @Column(name = "from_address", nullable = false)
     private byte[] from;
-    //pour stockage et communication
-    @Column(nullable = false, length = 2048)
+
+    @Column(name = "from_string", nullable = false, length = 2048)
     private String fromString;
 
-    @Column(nullable = false, length = 2048)
+    @Lob
+    @Column(name = "to_address", nullable = false)
     private byte[] to;
 
-    @Column(nullable = false, length = 2048)
+    @Column(name = "to_string", nullable = false, length = 2048)
     private String toString;
+
 
     @Column(nullable = false)
     private Integer value;
