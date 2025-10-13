@@ -11,6 +11,6 @@ import com.richmillionaire.richmillionaire.models.User;
 @Repository
 public interface UserDao extends JpaRepository<User, UUID> {
     Optional<User> findByUsername(String username);
-    boolean existsByUsername(String username);
-    boolean existsByEmail(String email);
+    Optional<User> findByEmail(String email);
+    Optional<User> findByUsernameOrEmail(String username, String email);
 }
