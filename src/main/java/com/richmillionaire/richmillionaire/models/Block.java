@@ -16,8 +16,9 @@ import lombok.Setter;
 @AllArgsConstructor
 public class Block {
 
+    
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     private UUID id;
 
     @Column(nullable = false, unique = true)

@@ -5,7 +5,7 @@ import java.util.List;
 import com.richmillionaire.richmillionaire.models.Wallet;
 
 public interface WalletDAO {
-    void save(Wallet wallet) throws Exception;
+    Wallet save(Wallet wallet) throws Exception;
 
     List<Wallet> findAll() throws Exception;
 

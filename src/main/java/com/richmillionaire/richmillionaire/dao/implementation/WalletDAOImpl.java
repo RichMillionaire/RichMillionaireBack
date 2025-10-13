@@ -19,8 +19,9 @@ public class WalletDAOImpl implements WalletDAO{
     private EntityManager entityManager;
 
     @Override
-    public void save(Wallet wallet) throws Exception {
+    public Wallet save(Wallet wallet) throws Exception {
         entityManager.persist(wallet);
+        return wallet;
     }
 
     @Override
