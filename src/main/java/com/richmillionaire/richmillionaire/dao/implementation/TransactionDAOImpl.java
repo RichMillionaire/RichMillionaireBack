@@ -6,7 +6,6 @@ import org.springframework.stereotype.Repository;
 
 import com.richmillionaire.richmillionaire.dao.TransactionDAO;
 import com.richmillionaire.richmillionaire.models.Transaction;
-import com.richmillionaire.richmillionaire.models.Wallet;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -20,8 +19,9 @@ public class TransactionDAOImpl implements TransactionDAO{
     private EntityManager entityManager;
 
     @Override
-    public void save(Transaction transaction) throws Exception {
-        entityManager.persist(transaction);    
+    public Transaction save(Transaction transaction) throws Exception {
+        entityManager.persist(transaction);   
+        return transaction;
     }
 
     @Override

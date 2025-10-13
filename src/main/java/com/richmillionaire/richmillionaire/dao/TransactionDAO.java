@@ -5,7 +5,7 @@ import java.util.List;
 import com.richmillionaire.richmillionaire.models.Transaction;
 
 public interface TransactionDAO {
-    void save(Transaction transaction) throws Exception;
+    Transaction save(Transaction transaction) throws Exception;
 
     List<Transaction> findAll() throws Exception;
 

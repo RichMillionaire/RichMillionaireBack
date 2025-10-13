@@ -6,7 +6,7 @@ import com.richmillionaire.richmillionaire.models.Block;
 
 public interface BlockDAO {
 
-    void save(Block block) throws Exception; //save block into chain
+    Block save(Block block) throws Exception; //save block into chain
 
     List<Block> findAll() throws Exception; //retourne tous les blocks stockés
 

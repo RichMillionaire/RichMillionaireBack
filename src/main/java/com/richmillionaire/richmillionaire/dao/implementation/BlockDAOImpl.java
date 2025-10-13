@@ -17,8 +17,9 @@ public class BlockDAOImpl implements BlockDAO {
     private EntityManager entityManager;
 
     @Override
-    public void save(Block block) {
+    public Block save(Block block) {
         entityManager.persist(block);
+        return block;
     }
 
     @Override

@@ -29,8 +29,9 @@ import jakarta.persistence.Table;
 @Setter
 public class Wallet {
     
+    
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     private UUID id;
 
     @Column(nullable = false, length = 2048)
