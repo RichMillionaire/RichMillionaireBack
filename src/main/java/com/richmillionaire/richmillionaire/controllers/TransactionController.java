@@ -12,9 +12,12 @@ import org.springframework.web.bind.annotation.RestController;
 import com.richmillionaire.richmillionaire.models.Transaction;
 import com.richmillionaire.richmillionaire.service.TransactionService;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+
 @CrossOrigin
 @RestController
 @RequestMapping(("/transactions"))
+@SecurityRequirement(name = "bearerAuth")
 public class TransactionController {
     private final TransactionService transactionService;
 

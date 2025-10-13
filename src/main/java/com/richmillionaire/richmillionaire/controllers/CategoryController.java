@@ -17,9 +17,12 @@ import com.richmillionaire.richmillionaire.dto.CategoryDto;
 import com.richmillionaire.richmillionaire.models.Category;
 import com.richmillionaire.richmillionaire.services.CategoryService;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+
 @CrossOrigin
 @RestController
 @RequestMapping("/categories")
+@SecurityRequirement(name = "bearerAuth")
 public class CategoryController {
 
     private final CategoryService categoryService;

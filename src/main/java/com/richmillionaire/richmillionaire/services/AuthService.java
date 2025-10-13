@@ -44,7 +44,7 @@ public class AuthService {
         user.setUsername(request.getUsername());
         user.setEmail(request.getEmail());
         user.setPassword(hashedPassword);
-        user.setRoles(new HashSet<>()); // ajouter des rôles par défaut si nécessaire
+        user.setRoles(new HashSet<>()); 
 
         userDao.save(user);
     }

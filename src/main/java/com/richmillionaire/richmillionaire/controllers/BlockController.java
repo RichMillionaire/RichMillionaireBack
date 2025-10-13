@@ -1,8 +1,5 @@
 package com.richmillionaire.richmillionaire.controllers;
 
-import com.richmillionaire.richmillionaire.models.Block;
-import com.richmillionaire.richmillionaire.service.BlockService;
-
 import java.util.List;
 
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -12,9 +9,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.richmillionaire.richmillionaire.models.Block;
+import com.richmillionaire.richmillionaire.service.BlockService;
+
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+
 @CrossOrigin
 @RestController
 @RequestMapping("/blocks")
+@SecurityRequirement(name = "bearerAuth")
 public class BlockController {
 
     private final BlockService blockService;

@@ -23,7 +23,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             "/auth/login",
             "/auth/register",
             "/auth/test-public",
-            "/swagger-ui"
+            "/swagger-ui",
+            "/swagger/swagger-config",
+            "/swagger"
 
     );
 
@@ -32,36 +34,46 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-            throws ServletException, IOException {
+protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+        throws ServletException, IOException {
 
-        String path = request.getRequestURI();
+    String path = request.getRequestURI();
 
-        // si la route est publique, on saute le filtre
-        if (publicEndpoints.stream().anyMatch(path::startsWith)) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-
-        String header = request.getHeader("Authorization");
-
-        if (header == null || !header.startsWith("Bearer ")) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().write("Token manquant");
-            return;
-        }
-
-        String token = header.substring(7);
-
-        if (!jwtUtil.validateToken(token)) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().write("Token invalide ou expiré");
-            return;
-        }
-
-        // Tu peux attacher le user si besoin
-        request.setAttribute("username", jwtUtil.getUsername(token));
-
+    // si la route est publique, on saute le filtre
+    if (publicEndpoints.stream().anyMatch(path::startsWith)) {
         filterChain.doFilter(request, response);
+        return;
     }
+
+    String token = null;
+    if (request.getCookies() != null) {
+        for (var cookie : request.getCookies()) {
+            if ("token".equals(cookie.getName())) {
+                token = cookie.getValue();
+                break;
+            }
+        }
+    }
+
+    if (token == null) {
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        response.setContentType("application/json");
+        response.getWriter().write("{\"success\":false,\"message\":\"Token manquant\"}");
+        return;
+    }
+
+    // Vérifie le token JWT
+    if (!jwtUtil.validateToken(token)) {
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        response.setContentType("application/json");
+        response.getWriter().write("{\"success\":false,\"message\":\"Token invalide ou expiré\"}");
+        return;
+    }
+
+    // Attacher les infos du user au request
+    request.setAttribute("username", jwtUtil.getUsername(token));
+
+    filterChain.doFilter(request, response);
+}
+
 }

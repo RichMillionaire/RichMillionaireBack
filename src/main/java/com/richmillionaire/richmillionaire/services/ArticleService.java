@@ -25,6 +25,7 @@ public class ArticleService {
 
     public List<Article> findAll() {
         Iterable<Article> it = articleDao.findAll();
+        System.out.println(it);
         List<Article> articles = new ArrayList<>();
         it.forEach(articles::add);
         return articles;
