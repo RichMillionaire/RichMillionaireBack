@@ -1,13 +1,15 @@
 package com.richmillionaire.richmillionaire.dao;
 
-import com.richmillionaire.richmillionaire.entity.RoleEntity;
+import java.util.Optional;
+import java.util.UUID;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
+import com.richmillionaire.richmillionaire.models.Role;
 
 @Repository
-public interface RoleDao extends JpaRepository<RoleEntity, Long> {
-    Optional<RoleEntity> findByName(String name);
+public interface RoleDao extends JpaRepository<Role, UUID> {
+    Optional<Role> findByName(String name);
     boolean existsByName(String name);
 }
