@@ -50,24 +50,24 @@ public class AuthService {
     }
 
     public AuthResponse login(LoginRequest request) throws Exception {
-    Optional<User> optionalUser = userDao.findByUsernameOrEmail(request.getUsernameOrEmail(), null);
-    if (optionalUser.isEmpty()) {
-        throw new Exception("Utilisateur non trouvé");
+        Optional<User> optionalUser = userDao.findByUsernameOrEmail(request.getUsernameOrEmail(), request.getUsernameOrEmail());
+        if (optionalUser.isEmpty()) {
+            throw new Exception("Utilisateur non trouvé");
+        }
+
+        User user = optionalUser.get();
+
+        if (!BCrypt.checkpw(request.getPassword(), user.getPassword())) {
+            throw new Exception("Mot de passe incorrect");
+        }
+
+        String token = jwtUtil.generateToken(user);
+
+        Set<String> roleNames = user.getRoles().stream()
+                .map(Role::getName)
+                .collect(Collectors.toSet());
+
+        return new AuthResponse(token, user.getUsername(), user.getEmail(), roleNames);
     }
-
-    User user = optionalUser.get();
-
-    if (!BCrypt.checkpw(request.getPassword(), user.getPassword())) {
-        throw new Exception("Mot de passe incorrect");
-    }
-
-    String token = jwtUtil.generateToken(user);
-
-    Set<String> roleNames = user.getRoles().stream()
-            .map(Role::getName)
-            .collect(Collectors.toSet());
-
-    return new AuthResponse(token, user.getUsername(), user.getEmail(), roleNames);
-}
 
 }
