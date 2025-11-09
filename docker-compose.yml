@@ -10,6 +10,7 @@ services:
       POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
       POSTGRES_DB: ${DATABASE_NAME}
     volumes:
+      - ./richmillionaire.sql:/docker-entrypoint-initdb.d/richmillionaire.sql
       - postgres_data:/var/lib/postgresql/data
     networks:
       - backend_net
@@ -19,7 +20,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    command: ["java", "-jar", "app.jar"]
+    # command: ["java", "-jar", "app.jar"]
     depends_on:
       - database
     environment:
