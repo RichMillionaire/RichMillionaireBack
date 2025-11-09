@@ -1,14 +1,41 @@
-version: '3.1'
 services:
   database:
-    container_name: api_database
-    image: postgres
+    container_name: rich_millionaire_db
+    image: postgres:15
     restart: always
     env_file:
       - .env
     environment:
-      POSTGRES_USER : ${DATABASE_USER}
+      POSTGRES_USER: ${DATABASE_USER}
       POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
       POSTGRES_DB: ${DATABASE_NAME}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - backend_net
+
+  backend:
+    container_name: rich_millionaire_back
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: ["java", "-jar", "app.jar"]
+    depends_on:
+      - database
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://database:5432/${DATABASE_NAME}
+      SPRING_DATASOURCE_USERNAME: ${DATABASE_USER}
+      SPRING_DATASOURCE_PASSWORD: ${DATABASE_PASSWORD}
     ports:
-      - "5432:5432"
+      - "8080:8080"
+    volumes:
+      - ./upload:/app/upload
+    networks:
+      - backend_net
+
+volumes:
+  postgres_data:
+
+networks:
+  backend_net:
+    driver: bridge
