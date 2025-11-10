@@ -50,8 +50,7 @@ public class BlockServiceImpl implements BlockService{
             newBlock.setPreviousHash(lastBlock.getCurrHash()); 
         }
 
-        String hash = newBlock.calculateHash();
-        newBlock.setMinedBy("system");
+        newBlock.setMinedBy(request.getMinedBy());
         newBlock.setNonce(0);
 
         // === LE SERVEUR MINE LE BLOC ===
@@ -65,6 +64,11 @@ public class BlockServiceImpl implements BlockService{
     @Transactional
     public void deleteById(int id) throws Exception{
         blockDAO.deletebyId(id);        
+    }
+    @Override
+    @Transactional
+    public Block update(Block block) throws Exception {
+        return blockDAO.save(block); 
     }
     
 }

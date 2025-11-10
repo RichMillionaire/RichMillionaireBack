@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.richmillionaire.richmillionaire.models.Wallet;
 import com.richmillionaire.richmillionaire.services.WalletService;
+import com.richmillionaire.richmillionaire.models.Transaction;
 
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 
@@ -33,8 +34,8 @@ public class WalletController {
         return walletService.findById(id);
     }
     @PostMapping("")
-    public Wallet createWallet(@RequestBody Wallet wallet) throws Exception {
-        return walletService.save(wallet);
+    public Wallet createWallet() throws Exception {
+        return walletService.createWallet();
     }
     @DeleteMapping("/{id}")
     public void deleteWallet(String id) throws Exception {
@@ -42,7 +43,7 @@ public class WalletController {
     }
 
     @PostMapping("/transfer")
-    public Wallet transfer(@RequestParam String fromPublicKey, @RequestParam String toPublicKey, @RequestParam double amount) throws Exception{
+    public Transaction transfer(@RequestParam String fromPublicKey, @RequestParam String toPublicKey, @RequestParam double amount) throws Exception{
         return walletService.transfer(fromPublicKey, toPublicKey, amount);
     }
 }

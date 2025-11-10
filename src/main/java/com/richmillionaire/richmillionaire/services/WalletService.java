@@ -2,6 +2,7 @@ package com.richmillionaire.richmillionaire.services;
 
 import java.util.List;
 
+import com.richmillionaire.richmillionaire.models.Transaction;
 import com.richmillionaire.richmillionaire.models.Wallet;
 
 
@@ -10,6 +11,6 @@ public interface WalletService {
     List<Wallet> findAll() throws Exception;
     Wallet save(Wallet wallet) throws Exception;
     void deleteById(String publicKey) throws Exception;    
-
-    Wallet transfer(String fromPublicKey, String toPublicKey, double amount) throws Exception;
+    Wallet createWallet() throws Exception;
+    Transaction transfer(String fromPublicKey, String toPublicKey, double amount) throws Exception;
 }
