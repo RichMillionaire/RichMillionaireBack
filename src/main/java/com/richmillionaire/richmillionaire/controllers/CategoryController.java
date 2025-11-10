@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.richmillionaire.richmillionaire.dto.ApiResponse;
 import com.richmillionaire.richmillionaire.dto.CategoryDto;
 import com.richmillionaire.richmillionaire.models.Category;
+import com.richmillionaire.richmillionaire.security.HasRole;
 import com.richmillionaire.richmillionaire.services.CategoryService;
 
 @CrossOrigin
@@ -45,6 +46,7 @@ public class CategoryController {
     }
 
     // Ajouter une catégorie
+    @HasRole("ADMIN")
     @PostMapping("")
     public ResponseEntity<ApiResponse<Category>> addCategory(@RequestBody CategoryDto categoryDto) {
         Category created = categoryService.addCategory(categoryDto);
@@ -52,6 +54,7 @@ public class CategoryController {
     }
 
     // Modifier une catégorie
+    @HasRole("ADMIN")
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<Category>> patchCategory(@PathVariable UUID id, @RequestBody CategoryDto categoryDto) {
         Category updated = categoryService.putCategory(id, categoryDto);
@@ -59,6 +62,7 @@ public class CategoryController {
     }
 
     // Supprimer une catégorie
+    @HasRole("ADMIN")
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<Category>> deleteCategory(@PathVariable UUID id) {
         Category deleted = categoryService.deleteById(id);

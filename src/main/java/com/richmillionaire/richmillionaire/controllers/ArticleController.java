@@ -26,6 +26,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.richmillionaire.richmillionaire.dto.ApiResponse;
 import com.richmillionaire.richmillionaire.dto.ArticleDto;
 import com.richmillionaire.richmillionaire.models.Article;
+import com.richmillionaire.richmillionaire.security.HasRole;
 import com.richmillionaire.richmillionaire.services.ArticleService;
 
 @CrossOrigin
@@ -70,12 +71,14 @@ public class ArticleController {
         return ResponseEntity.ok(ApiResponse.success("Article récupéré ✅", article));
     }
 
+    @HasRole("ADMIN")
     @PostMapping("")
     public ResponseEntity<ApiResponse<Article>> addArticleSimple(@RequestBody ArticleDto articleDto) {
         Article article = articleService.addArticle(articleDto);
         return ResponseEntity.ok(ApiResponse.success("Article ajouté ✅", article));
     }
 
+    @HasRole("ADMIN")
     @PostMapping(value = "/with-image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ApiResponse<Article>> addArticleWithImage(
             @RequestPart("article") String articleJson,
@@ -87,6 +90,7 @@ public class ArticleController {
         return ResponseEntity.ok(ApiResponse.success("Article ajouté avec image ✅", article));
     }
 
+    @HasRole("ADMIN")
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<Article>> updateArticleSimple(
             @PathVariable UUID id, 
@@ -96,6 +100,7 @@ public class ArticleController {
         return ResponseEntity.ok(ApiResponse.success("Article mis à jour ✅", updated));
     }
 
+    @HasRole("ADMIN")
     @PutMapping(value = "/{id}/with-image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ApiResponse<Article>> updateArticleWithImage(
             @PathVariable UUID id,
@@ -108,6 +113,7 @@ public class ArticleController {
         return ResponseEntity.ok(ApiResponse.success("Article mis à jour avec image ✅", updated));
     }
 
+    @HasRole("ADMIN")
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<Article>> deleteArticle(@PathVariable UUID id) {
         Article deleted = articleService.deleteArticleWithImages(id);
