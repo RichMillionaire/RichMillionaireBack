@@ -45,7 +45,7 @@ public class Wallet {
     @Column(nullable = false)
     private Double balance = 0.0;
 
-    @ManyToOne
+    @ManyToOne(fetch = jakarta.persistence.FetchType.LAZY)
     @JoinColumn(name = "user_id")
     @JsonIgnore
     private User user;
