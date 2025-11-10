@@ -35,5 +35,29 @@ public class WalletServiceImpl implements WalletService{
     public void deleteById(String publicKey) throws Exception {
         walletDAO.deleteById(publicKey);
     }
-    
+    @Override
+    public Wallet transfer(String fromPublicKey, String toPublicKey, double amount) throws Exception {
+        Wallet fromWallet = walletDAO.findById(fromPublicKey);
+        Wallet toWallet = walletDAO.findById(toPublicKey);
+
+        if (fromWallet == null || toWallet == null) {
+            throw new Exception("L'un des wallets n'existe pas!");
+        }
+
+        if (amount <= 0) {
+            throw new Exception("Mais envoie quelque chose, sois pas nul!");
+        }
+
+        if (fromWallet.getBalance() < amount) {
+            throw new Exception("T'as pas d'argent, t'es naz!!");
+        }
+
+        fromWallet.setBalance(fromWallet.getBalance() - amount);
+        toWallet.setBalance(toWallet.getBalance() + amount);
+
+        walletDAO.save(toWallet);
+        walletDAO.save(fromWallet);
+
+        return fromWallet;
+    }
 }

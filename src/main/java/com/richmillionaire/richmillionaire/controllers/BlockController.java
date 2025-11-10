@@ -1,7 +1,10 @@
 package com.richmillionaire.richmillionaire.controllers;
 
+import com.richmillionaire.richmillionaire.dto.CreateBlockRequest;
 import com.richmillionaire.richmillionaire.models.Block;
 import com.richmillionaire.richmillionaire.services.BlockService;
+
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 
@@ -31,8 +34,8 @@ public class BlockController {
         return blockService.findById(id);
     }
     @PostMapping("")
-    public Block createBlock(Block block) throws Exception {
-        return blockService.save(block);
+    public Block createBlock(@RequestBody CreateBlockRequest request) throws Exception {
+        return blockService.save(request);
     }
     @DeleteMapping("/{id}")
     public void deleteBlock(int id) throws Exception {

@@ -10,4 +10,6 @@ public interface WalletService {
     List<Wallet> findAll() throws Exception;
     Wallet save(Wallet wallet) throws Exception;
     void deleteById(String publicKey) throws Exception;    
+
+    Wallet transfer(String fromPublicKey, String toPublicKey, double amount) throws Exception;
 }
