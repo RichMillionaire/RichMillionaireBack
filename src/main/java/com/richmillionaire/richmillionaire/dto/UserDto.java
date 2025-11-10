@@ -29,8 +29,6 @@ public class UserDto {
     private Set<String> role;
 
     
-    private String firstName;
-    private String lastName;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

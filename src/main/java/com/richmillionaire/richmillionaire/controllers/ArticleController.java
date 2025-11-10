@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.richmillionaire.richmillionaire.dto.ApiResponse;
 import com.richmillionaire.richmillionaire.dto.ArticleDto;
 import com.richmillionaire.richmillionaire.models.Article;
 import com.richmillionaire.richmillionaire.services.ArticleService;
@@ -41,78 +42,78 @@ public class ArticleController {
     }
 
     @GetMapping("")
-    public ResponseEntity<Page<Article>> getAllArticles(
+    public ResponseEntity<ApiResponse<Page<Article>>> getAllArticles(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
         Pageable pageable = PageRequest.of(page, size);
         Page<Article> articlesPage = articleService.findAll(pageable);
-        return ResponseEntity.ok(articlesPage);
+        return ResponseEntity.ok(ApiResponse.success("Liste des articles récupérée ✅", articlesPage));
     }
 
     @GetMapping("/search")
-    public List<Article> searchArticles(
+    public ResponseEntity<ApiResponse<List<Article>>> searchArticles(
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) String category,
             @RequestParam(required = false) String sort) {
-        return articleService.searchArticles(keyword, category, sort);
+
+        List<Article> articles = articleService.searchArticles(keyword, category, sort);
+        return ResponseEntity.ok(ApiResponse.success("Résultats de recherche ✅", articles));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Article> getArticleById(@PathVariable UUID id) {
+    public ResponseEntity<ApiResponse<Article>> getArticleById(@PathVariable UUID id) {
         Article article = articleService.getById(id);
-        return ResponseEntity.ok(article);
+        return ResponseEntity.ok(ApiResponse.success("Article récupéré ✅", article));
     }
 
-    // Version simple sans fichier (comme CategoryController)
     @PostMapping("")
-    public ResponseEntity<Article> addArticleSimple(@RequestBody ArticleDto articleDto) {
+    public ResponseEntity<ApiResponse<Article>> addArticleSimple(@RequestBody ArticleDto articleDto) {
         Article article = articleService.addArticle(articleDto);
-        return ResponseEntity.ok(article);
+        return ResponseEntity.ok(ApiResponse.success("Article ajouté ✅", article));
     }
 
-    // Version avec upload de fichier
     @PostMapping(value = "/with-image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Article> addArticleWithImage(
+    public ResponseEntity<ApiResponse<Article>> addArticleWithImage(
             @RequestPart("article") String articleJson,
             @RequestPart(value = "image", required = false) MultipartFile image
     ) throws IOException {
+
         ArticleDto articleDto = objectMapper.readValue(articleJson, ArticleDto.class);
         Article article = articleService.addArticleWithImage(articleDto, image);
-        return ResponseEntity.ok(article);
+        return ResponseEntity.ok(ApiResponse.success("Article ajouté avec image ✅", article));
     }
 
-    // Version simple pour update
     @PutMapping("/{id}")
-    public ResponseEntity<Article> updateArticleSimple(
+    public ResponseEntity<ApiResponse<Article>> updateArticleSimple(
             @PathVariable UUID id, 
             @RequestBody ArticleDto articleDto
     ) {
         Article updated = articleService.updateArticle(articleDto, id);
-        return ResponseEntity.ok(updated);
+        return ResponseEntity.ok(ApiResponse.success("Article mis à jour ✅", updated));
     }
 
-    // Version update avec image
     @PutMapping(value = "/{id}/with-image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Article> updateArticleWithImage(
+    public ResponseEntity<ApiResponse<Article>> updateArticleWithImage(
             @PathVariable UUID id,
             @RequestPart("article") String articleJson,
             @RequestPart(value = "image", required = false) MultipartFile image
     ) throws IOException {
+
         ArticleDto articleDto = objectMapper.readValue(articleJson, ArticleDto.class);
         Article updated = articleService.updateArticleWithImage(articleDto, id, image);
-        return ResponseEntity.ok(updated);
+        return ResponseEntity.ok(ApiResponse.success("Article mis à jour avec image ✅", updated));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Article> deleteArticle(@PathVariable UUID id) {
+    public ResponseEntity<ApiResponse<Article>> deleteArticle(@PathVariable UUID id) {
         Article deleted = articleService.deleteArticleWithImages(id);
-        return ResponseEntity.ok(deleted);
+        return ResponseEntity.ok(ApiResponse.success("Article supprimé ✅", deleted));
     }
 
     @GetMapping("/category/{categoryId}")
-    public ResponseEntity<List<Article>> getArticlesByCategory(@PathVariable UUID categoryId) {
+    public ResponseEntity<ApiResponse<List<Article>>> getArticlesByCategory(@PathVariable UUID categoryId) {
         List<Article> articles = articleService.findByCategoryId(categoryId);
-        return ResponseEntity.ok(articles);
+        return ResponseEntity.ok(ApiResponse.success("Articles par catégorie récupérés ✅", articles));
     }
 }
