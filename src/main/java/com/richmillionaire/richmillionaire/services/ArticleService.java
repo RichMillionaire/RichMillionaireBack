@@ -9,8 +9,10 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -86,23 +88,32 @@ public class ArticleService {
         return articleDao.findByCategories_Id(categoryId);
     }
 
-    public List<Article> searchArticles(String keyword, String categoryName, String sort) {
-        if ("asc".equalsIgnoreCase(sort)) {
-            return articleDao.findByCategories_Name(categoryName)
-                            .stream().sorted(Comparator.comparing(Article::getPrice)).toList();
-        } else if ("desc".equalsIgnoreCase(sort)) {
-            return articleDao.findByCategories_Name(categoryName)
-                            .stream().sorted(Comparator.comparing(Article::getPrice).reversed()).toList();
-        } else if (keyword != null && !keyword.isEmpty() && categoryName != null) {
-            return articleDao.findByNameContainingIgnoreCaseAndCategories_Name(keyword, categoryName);
+     public Page<Article> searchArticles(String keyword, String category, String sort, Pageable pageable) {
+        Page<Article> pageResult;
+
+        if (keyword != null && !keyword.isEmpty() && category != null) {
+            pageResult = articleDao.findByNameContainingIgnoreCaseAndCategories_Name(keyword, category, pageable);
         } else if (keyword != null && !keyword.isEmpty()) {
-            return articleDao.findByNameContainingIgnoreCase(keyword);
-        } else if (categoryName != null) {
-            return articleDao.findByCategories_Name(categoryName);
+            pageResult = articleDao.findByNameContainingIgnoreCase(keyword, pageable);
+        } else if (category != null && !category.isEmpty()) {
+            pageResult = articleDao.findByCategories_Name(category, pageable);
         } else {
-            return articleDao.findAll();
+            pageResult = articleDao.findAll(pageable);
         }
+
+        // Tri sur le prix si demandé
+        if ("asc".equalsIgnoreCase(sort) || "desc".equalsIgnoreCase(sort)) {
+            List<Article> sorted = pageResult.getContent().stream()
+                    .sorted("asc".equalsIgnoreCase(sort)
+                            ? Comparator.comparing(Article::getPrice)
+                            : Comparator.comparing(Article::getPrice).reversed())
+                    .collect(Collectors.toList());
+            return new PageImpl<>(sorted, pageable, pageResult.getTotalElements());
+        }
+
+        return pageResult;
     }
+
 
     // ========== MÉTHODES AVEC GESTION DES IMAGES ==========
 
