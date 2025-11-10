@@ -1,10 +1,12 @@
 package com.richmillionaire.richmillionaire.dao.implementation;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.stereotype.Repository;
 
 import com.richmillionaire.richmillionaire.dao.WalletDAO;
+import com.richmillionaire.richmillionaire.models.User;
 import com.richmillionaire.richmillionaire.models.Wallet;
 
 import jakarta.persistence.EntityManager;
@@ -53,5 +55,25 @@ public class WalletDAOImpl implements WalletDAO{
         if (wallet != null) {
             entityManager.remove(wallet);
         }
+    }
+
+    @Override
+    public List<Wallet> findByUser(User user) throws Exception {
+        TypedQuery<Wallet> query = entityManager.createQuery(
+            "SELECT w FROM Wallet w WHERE w.user = :user", 
+            Wallet.class
+        );
+        query.setParameter("user", user);
+        return query.getResultList();
+    }
+
+    @Override
+    public List<Wallet> findByUserId(UUID userId) throws Exception {
+        TypedQuery<Wallet> query = entityManager.createQuery(
+            "SELECT w FROM Wallet w WHERE w.user.id = :userId", 
+            Wallet.class
+        );
+        query.setParameter("userId", userId);
+        return query.getResultList();
     }
 }
