@@ -52,13 +52,16 @@ public class ArticleController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<ApiResponse<List<Article>>> searchArticles(
+    public ResponseEntity<ApiResponse<Page<Article>>> searchArticles(
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) String category,
-            @RequestParam(required = false) String sort) {
-
-        List<Article> articles = articleService.searchArticles(keyword, category, sort);
-        return ResponseEntity.ok(ApiResponse.success("Résultats de recherche ✅", articles));
+            @RequestParam(required = false) String sort,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Article> articlesPage = articleService.searchArticles(keyword, category, sort, pageable);
+        return ResponseEntity.ok(ApiResponse.success("Résultats de recherche ✅", articlesPage));
     }
 
     @GetMapping("/{id}")
