@@ -3,6 +3,7 @@ package com.richmillionaire.richmillionaire.dao;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -31,4 +32,15 @@ public interface ArticleDao extends JpaRepository<Article, UUID> {
 
     // Pagination par catégorie (ex: pour éviter de ramener 1000 articles)
     List<Article> findByCategories_Id(UUID categoryId, Pageable pageable);
+
+    Page<Article> findByNameContainingIgnoreCase(String keyword, Pageable pageable);
+
+    // Pagination par catégorie
+    Page<Article> findByCategories_Name(String categoryName, Pageable pageable);
+
+    // Pagination par keyword + catégorie
+    Page<Article> findByNameContainingIgnoreCaseAndCategories_Name(String keyword, String categoryName, Pageable pageable);
+
+    
 }
+

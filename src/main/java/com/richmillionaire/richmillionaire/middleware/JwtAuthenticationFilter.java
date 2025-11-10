@@ -9,7 +9,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.richmillionaire.richmillionaire.dao.UserDao;
 import com.richmillionaire.richmillionaire.dto.ApiResponse;
+import com.richmillionaire.richmillionaire.models.User;
 import com.richmillionaire.richmillionaire.utils.JwtUtil;
 
 import jakarta.servlet.FilterChain;
@@ -22,6 +24,7 @@ import jakarta.servlet.http.HttpServletResponse;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
+    private final UserDao userDao;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     // Liste blanche = routes publiques
@@ -33,8 +36,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             "/swagger"
     );
 
-    public JwtAuthenticationFilter(JwtUtil jwtUtil) {
+    public JwtAuthenticationFilter(JwtUtil jwtUtil, UserDao userDao) {
         this.jwtUtil = jwtUtil;
+        this.userDao = userDao;
     }
 
     @Override
@@ -74,7 +78,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
-        request.setAttribute("username", jwtUtil.getUsername(token));
+        String username = jwtUtil.getUsername(token);
+        User user = userDao.findByUsername(username)
+                .orElse(null);
+
+        if (user == null) {
+            writeJsonResponse(response, HttpServletResponse.SC_UNAUTHORIZED,
+                    ApiResponse.error("Utilisateur non trouvé"));
+            return;
+        }
+
+        request.setAttribute("user", user);
 
         filterChain.doFilter(request, response);
     }

@@ -40,25 +40,28 @@ public class CategoryService {
     }
 
     @Transactional
-    public void deleteById(UUID id) {
-        categoryDao.deleteById(id);
+    public Category deleteById(UUID id) {
+        Category category = getById(id);
+        categoryDao.delete(category);
+        return category;
     }
 
     @Transactional
-    public void addCategory(CategoryDto categoryDto) {
+    public Category addCategory(CategoryDto categoryDto) {
         Category category;
         try {
             category = CategoryMapper.fromDto(categoryDto, null);
         } catch (IOException e) {
             throw new RuntimeException("Error while mapping Category DTO", e);
         }
-        categoryDao.save(category);
+        return categoryDao.save(category);
     }
 
     @Transactional
-    public void putCategory(UUID id, CategoryDto categoryDto) {
+    public Category putCategory(UUID id, CategoryDto categoryDto) {
         Category category = categoryDao.findById(id)
             .orElseThrow(() -> new NoSuchElementException("Category not found with id: " + id));
+        
         if (categoryDto.getName() != null && !categoryDto.getName().isEmpty()) {
             category.setName(categoryDto.getName());
         }
@@ -66,7 +69,7 @@ public class CategoryService {
             category.setDescription(categoryDto.getDescription());
         }
 
-        categoryDao.save(category);
+        return categoryDao.save(category);
     }
 
     public List<Category> findByArticleId(UUID articleId) {
