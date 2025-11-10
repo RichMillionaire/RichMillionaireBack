@@ -96,4 +96,17 @@ public class AuthController {
 
         return ResponseEntity.ok(ApiResponse.success("Utilisateur connecté ✅", userDto));
     }
+
+    @PostMapping("/logout")
+    public ResponseEntity<ApiResponse<String>> logout(HttpServletResponse response) {
+        // Supprimer le cookie token en créant un cookie avec MaxAge=0
+        Cookie cookie = new Cookie("token", null);
+        cookie.setHttpOnly(false);
+        cookie.setSecure(false);
+        cookie.setPath("/");
+        cookie.setMaxAge(0); // Expire immédiatement
+        response.addCookie(cookie);
+
+        return ResponseEntity.ok(ApiResponse.success("Déconnexion réussie ✅", null));
+    }
 }

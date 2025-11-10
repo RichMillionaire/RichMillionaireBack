@@ -1,12 +1,14 @@
 package com.richmillionaire.richmillionaire.services.impl;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.Base64;
 import java.security.Signature;
 import org.springframework.stereotype.Service;
 
 import com.richmillionaire.richmillionaire.dao.WalletDAO;
 import com.richmillionaire.richmillionaire.dto.CreateBlockRequest;
+import com.richmillionaire.richmillionaire.models.User;
 import com.richmillionaire.richmillionaire.models.Wallet;
 import com.richmillionaire.richmillionaire.models.Transaction;
 import com.richmillionaire.richmillionaire.models.Block;
@@ -55,6 +57,25 @@ public class WalletServiceImpl implements WalletService{
         Wallet newWallet = new Wallet(); 
         newWallet.setBalance(500.0);
         return walletDAO.save(newWallet);
+    }
+
+    @Override
+    @Transactional
+    public Wallet createWalletForUser(User user) throws Exception {
+        Wallet newWallet = new Wallet(); 
+        newWallet.setBalance(500.0);
+        newWallet.setUser(user);
+        return walletDAO.save(newWallet);
+    }
+
+    @Override
+    public List<Wallet> findByUser(User user) throws Exception {
+        return walletDAO.findByUser(user);
+    }
+
+    @Override
+    public List<Wallet> findByUserId(UUID userId) throws Exception {
+        return walletDAO.findByUserId(userId);
     }
     @Override
     @Transactional

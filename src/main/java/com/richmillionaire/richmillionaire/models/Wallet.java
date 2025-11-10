@@ -15,6 +15,8 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.Getter;
 import lombok.Setter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -42,6 +44,11 @@ public class Wallet {
 
     @Column(nullable = false)
     private Double balance = 0.0;
+
+    @ManyToOne(fetch = jakarta.persistence.FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    @JsonIgnore
+    private User user;
 
 
     public static final int KEY_SIZE = 2048;
