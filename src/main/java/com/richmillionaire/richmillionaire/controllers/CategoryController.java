@@ -46,11 +46,11 @@ public class CategoryController {
         categoryService.addCategory(categoryDto);
     }
 
-    // Mettre à jour une catégorie
     @PutMapping("/{id}")
-    public void updateCategory(@PathVariable UUID id, @RequestBody CategoryDto categoryDto) {
-        categoryService.updateCategory(categoryDto, id);
+    public void patchCategory(@PathVariable UUID id, @RequestBody CategoryDto categoryDto) {
+    categoryService.putCategory(id, categoryDto);
     }
+
 
     // Supprimer une catégorie
     @DeleteMapping("/{id}")
@@ -58,9 +58,9 @@ public class CategoryController {
         categoryService.deleteById(id);
     }
 
-    // // Récupérer les catégories d’un article
-    // @GetMapping("/article/{articleId}")
-    // public List<Category> getCategoriesByArticle(@PathVariable UUID articleId) {
-    //     return categoryService.findByArticle(articleId);
-    // }
+    // Récupérer les catégories d’un article
+    @GetMapping("/article/{articleId}")
+    public List<Category> getCategoriesByArticle(@PathVariable UUID articleId) {
+        return categoryService.findByArticleId(articleId);
+    }
 }

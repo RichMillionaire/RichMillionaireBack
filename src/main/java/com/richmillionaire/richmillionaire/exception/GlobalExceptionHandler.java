@@ -18,7 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class GlobalExceptionHandler {
 
-    // 🔥 Pour toutes les erreurs Runtime classiques
+    
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<ErrorResponse> handleRuntimeException(RuntimeException ex) {
         log.error("❌ Runtime exception: ", ex);
@@ -31,7 +31,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(error);
     }
 
-    // 🚫 Pour les erreurs de login (notre propre exception custom)
+    
     @ExceptionHandler(InvalidCredentialsException.class)
     public ResponseEntity<ErrorResponse> handleInvalidCredentials(InvalidCredentialsException ex) {
         log.error("⚠️ Invalid credentials: ", ex);
@@ -44,7 +44,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
     }
 
-    // 🧾 Pour les erreurs de validation (DTO avec @Valid)
+    
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleValidationExceptions(MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
@@ -64,7 +64,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(error);
     }
 
-    // 💥 Optionnel : pour gérer une erreur JWT custom
+    
     @ExceptionHandler(JwtException.class)
     public ResponseEntity<ErrorResponse> handleJwtException(JwtException ex) {
         log.error("🔑 JWT Error: ", ex);

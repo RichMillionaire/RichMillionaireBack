@@ -9,18 +9,22 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.richmillionaire.richmillionaire.dao.ArticleDao;
 import com.richmillionaire.richmillionaire.dao.CategoryDao;
 import com.richmillionaire.richmillionaire.dto.CategoryDto;
 import com.richmillionaire.richmillionaire.dto.CategoryMapper;
+import com.richmillionaire.richmillionaire.models.Article;
 import com.richmillionaire.richmillionaire.models.Category;
 
 @Service
 public class CategoryService {
 
     private final CategoryDao categoryDao;
+    private final ArticleDao articleDao;
 
-    public CategoryService(CategoryDao categoryDao) {
+    public CategoryService(CategoryDao categoryDao, ArticleDao articleDao) {
         this.categoryDao = categoryDao;
+        this.articleDao = articleDao;
     }
 
     public List<Category> findAll() {
@@ -52,19 +56,22 @@ public class CategoryService {
     }
 
     @Transactional
-    public void updateCategory(CategoryDto categoryDto, UUID id) {
-        categoryDao.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("Category doesn't exist"));
-        Category category;
-        try {
-            category = CategoryMapper.fromDto(categoryDto, id);
-        } catch (IOException e) {
-            throw new RuntimeException("Error while mapping Category DTO", e);
+    public void putCategory(UUID id, CategoryDto categoryDto) {
+        Category category = categoryDao.findById(id)
+            .orElseThrow(() -> new NoSuchElementException("Category not found with id: " + id));
+        if (categoryDto.getName() != null && !categoryDto.getName().isEmpty()) {
+            category.setName(categoryDto.getName());
         }
+        if (categoryDto.getDescription() != null && !categoryDto.getDescription().isEmpty()) {
+            category.setDescription(categoryDto.getDescription());
+        }
+
         categoryDao.save(category);
     }
 
-    public List<Category> findCategoriesByArticleId(UUID articleId) {
-        return categoryDao.findByArticles_Id(articleId);
+    public List<Category> findByArticleId(UUID articleId) {
+        Article article = articleDao.findById(articleId)
+                .orElseThrow(() -> new NoSuchElementException("Article not found with id: " + articleId));
+        return new ArrayList<>(article.getCategories());
     }
 }

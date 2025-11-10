@@ -43,8 +43,9 @@ public class Article {
     @Column(nullable = false)
     private Double price;
 
-    @Column(name = "photo_url")
+    @Column(name = "photo_url", columnDefinition = "TEXT")
     private String photoUrl;
+
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(

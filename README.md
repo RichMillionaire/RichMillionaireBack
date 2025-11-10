@@ -1,12 +1,17 @@
+
 ## RichMillionaire - Projet Spring Boot
 
 ⚡ Démarrage du projet
 
-1. Lancer le serveur par défaut
-```mvn spring-boot:run```
+1. Lancer le serveur par défaut :
+```bash
+mvn spring-boot:run
+```
 
-2. Lancer avec un profil spécifique (`local`)
-```mvn spring-boot:run -Dspring-boot.run.profiles=local```
+2. Lancer avec un profil spécifique (`local`) :
+```bash
+mvn spring-boot:run -Dspring-boot.run.profiles=local
+```
 
 > Cela permet d’utiliser le fichier application-local.properties pour la configuration locale.
 
@@ -26,19 +31,42 @@ spring.jpa.show-sql=true
 ```
 
 💡 Conseils :
-- Remplace USER et MDP par vos identifiants PostgreSQL.
-- spring.jpa.hibernate.ddl-auto=update met à jour la base automatiquement (pratique pour dev, à éviter en prod).
-- Pour un reload automatique du serveur à chaque changement, ajoutez spring-boot-devtools dans le pom.xml :
+- Remplacez USER et MDP par vos identifiants PostgreSQL.
+- `spring.jpa.hibernate.ddl-auto=update` met à jour la base automatiquement (pratique pour le développement, à éviter en production).
+- Pour un rechargement automatique du serveur à chaque changement de code, vous pouvez ajouter Spring Boot DevTools dans le pom.xml :
 
-```<dependency>
+```xml
+<dependency>
     <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-devtools</arifactId>
+    <artifactId>spring-boot-devtools</artifactId>
     <optional>true</optional>
 </dependency>
 ```
 
-🔧 Astuces dev
+---
 
-- Avec DevTools, le serveur se relance automatiquement dès que tu modifies le code.
-- Pour vérifier que tout fonctionne, regarde la console : le serveur doit indiquer le port et l'adresse sur lesquels il tourne.
-- Profite du mode local pour tester sans toucher la config de prod.
+🐳 Lancer le projet avec Docker
+
+1. Assurez-vous que le fichier `application-docker.properties` est configuré correctement pour Docker :
+```
+spring.datasource.url=jdbc:postgresql://database:5432/richmillionaire
+spring.datasource.username=USER
+spring.datasource.password=MDP
+```
+- `database` est le nom du service PostgreSQL dans Docker Compose.
+
+2. Construisez et lancez les containers :
+```bash
+docker compose up --build
+```
+
+3. Vérifiez que le backend et la base de données sont bien lancés :
+```bash
+docker ps
+```
+
+💡 Astuce :
+- Si vous souhaitez réinjecter le dump SQL, supprimez le volume Docker lié à la base de données avant de relancer :
+```bash
+docker compose down -v
+```

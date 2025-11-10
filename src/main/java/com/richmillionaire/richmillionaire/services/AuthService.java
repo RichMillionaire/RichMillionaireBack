@@ -50,7 +50,7 @@ public class AuthService {
     }
 
     public AuthResponse login(LoginRequest request) throws Exception {
-    Optional<User> optionalUser = userDao.findByUsernameOrEmail(request.getUsernameOrEmail(), null);
+    Optional<User> optionalUser = userDao.findByUsernameOrEmail(request.getUsernameOrEmail(),null);
     if (optionalUser.isEmpty()) {
         throw new Exception("Utilisateur non trouvé");
     }
@@ -67,7 +67,7 @@ public class AuthService {
             .map(Role::getName)
             .collect(Collectors.toSet());
 
-    return new AuthResponse(token, user.getUsername(), user.getEmail(), roleNames);
+    return new AuthResponse(token, user.getUsername(), user.getEmail(), roleNames, user.getId(), null, null, null, null);
 }
 
 }

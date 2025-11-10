@@ -1,15 +1,20 @@
 package com.richmillionaire.richmillionaire.middleware;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.richmillionaire.richmillionaire.dto.ApiResponse;
 import com.richmillionaire.richmillionaire.utils.JwtUtil;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -17,16 +22,15 @@ import jakarta.servlet.http.HttpServletResponse;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
-    // liste blanche = routes publiques
+    // Liste blanche = routes publiques
     private final List<String> publicEndpoints = List.of(
             "/auth/login",
             "/auth/register",
             "/auth/test-public",
             "/swagger-ui",
-            "/swagger",
-            "/"
-
+            "/swagger"
     );
 
     public JwtAuthenticationFilter(JwtUtil jwtUtil) {
@@ -39,31 +43,47 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String path = request.getRequestURI();
 
-        // si la route est publique, on saute le filtre
         if (publicEndpoints.stream().anyMatch(path::startsWith)) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        String header = request.getHeader("Authorization");
-
-        if (header == null || !header.startsWith("Bearer ")) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().write("Token manquant");
+        Cookie[] cookies = request.getCookies();
+        if (cookies == null) {
+            writeJsonResponse(response, HttpServletResponse.SC_UNAUTHORIZED,
+                    ApiResponse.error("Aucun cookie trouvé"));
             return;
         }
 
-        String token = header.substring(7);
+        Cookie tokenCookie = Arrays.stream(cookies)
+                .filter(c -> "token".equals(c.getName()))
+                .findFirst()
+                .orElse(null);
+
+        if (tokenCookie == null || tokenCookie.getValue().isBlank()) {
+            writeJsonResponse(response, HttpServletResponse.SC_UNAUTHORIZED,
+                    ApiResponse.error("UNAUTHORIZED: Aucun token trouvé"));
+            return;
+        }
+
+        String token = tokenCookie.getValue();
 
         if (!jwtUtil.validateToken(token)) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().write("Token invalide ou expiré");
+            writeJsonResponse(response, HttpServletResponse.SC_UNAUTHORIZED,
+                    ApiResponse.error("Token invalide"));
             return;
         }
 
-        // Tu peux attacher le user si besoin
         request.setAttribute("username", jwtUtil.getUsername(token));
 
         filterChain.doFilter(request, response);
+    }
+
+    private void writeJsonResponse(HttpServletResponse response, int status, ApiResponse<?> apiResponse)
+            throws IOException {
+        response.setStatus(status);
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        String json = objectMapper.writeValueAsString(apiResponse);
+        response.getWriter().write(json);
     }
 }
