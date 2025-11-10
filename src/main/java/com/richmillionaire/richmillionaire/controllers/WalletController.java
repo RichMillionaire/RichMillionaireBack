@@ -7,12 +7,13 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.richmillionaire.richmillionaire.models.Transaction;
 import com.richmillionaire.richmillionaire.models.Wallet;
-import com.richmillionaire.richmillionaire.services.TransactionService;
 import com.richmillionaire.richmillionaire.services.WalletService;
+
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 
 @CrossOrigin
 @RestController
@@ -24,19 +25,24 @@ public class WalletController {
         this.walletService = walletService;
     }
     @GetMapping("")
-    public List<Wallet> getAllTransactions() throws Exception{
+    public List<Wallet> getAllWallets() throws Exception{
         return walletService.findAll();
     }
     @GetMapping("/{id}")
-    public Wallet getTransaction(String id) throws Exception {
+    public Wallet getWallet(String id) throws Exception {
         return walletService.findById(id);
     }
     @PostMapping("")
-    public Wallet createBlock(Wallet wallet) throws Exception {
+    public Wallet createWallet(@RequestBody Wallet wallet) throws Exception {
         return walletService.save(wallet);
     }
     @DeleteMapping("/{id}")
-    public void deleteBlock(String id) throws Exception {
+    public void deleteWallet(String id) throws Exception {
         walletService.deleteById(id);
+    }
+
+    @PostMapping("/transfer")
+    public Wallet transfer(@RequestParam String fromPublicKey, @RequestParam String toPublicKey, @RequestParam double amount) throws Exception{
+        return walletService.transfer(fromPublicKey, toPublicKey, amount);
     }
 }

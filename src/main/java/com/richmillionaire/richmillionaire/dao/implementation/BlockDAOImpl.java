@@ -40,4 +40,14 @@ public class BlockDAOImpl implements BlockDAO {
             entityManager.remove(block);
         }
     }
+    @Override
+    public Block findLastBlock() throws Exception {
+        try {
+            return entityManager.createQuery("FROM Block b ORDER BY b.timeStamp DESC", Block.class)
+                .setMaxResults(1)
+                .getSingleResult();
+        } catch (jakarta.persistence.NoResultException e) {
+            return null; 
+        }
+    }
 }
