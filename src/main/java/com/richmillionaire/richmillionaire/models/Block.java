@@ -28,7 +28,7 @@ public class Block {
     @Column(nullable = false)
     private String previousHash;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 2048)
     private String data;
 
     @Column(nullable = false)
@@ -37,7 +37,7 @@ public class Block {
     @Column(nullable = false)
     private int nonce;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 2048)
     private String minedBy;
 
     public String calculateHash() {

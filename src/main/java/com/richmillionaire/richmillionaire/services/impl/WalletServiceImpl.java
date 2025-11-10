@@ -1,20 +1,34 @@
 package com.richmillionaire.richmillionaire.services.impl;
 
 import java.util.List;
-
+import java.util.Base64;
+import java.security.Signature;
 import org.springframework.stereotype.Service;
 
 import com.richmillionaire.richmillionaire.dao.WalletDAO;
+import com.richmillionaire.richmillionaire.dto.CreateBlockRequest;
 import com.richmillionaire.richmillionaire.models.Wallet;
+import com.richmillionaire.richmillionaire.models.Transaction;
+import com.richmillionaire.richmillionaire.models.Block;
 import com.richmillionaire.richmillionaire.services.WalletService;
+
+import jakarta.transaction.Transactional;
+
+import com.richmillionaire.richmillionaire.services.BlockService;
+import com.richmillionaire.richmillionaire.services.TransactionService;
+import com.richmillionaire.richmillionaire.core.Blockchain;
 
 @Service
 public class WalletServiceImpl implements WalletService{
 
     private final WalletDAO walletDAO;
+    private final BlockService blockService;
+    private final TransactionService transactionService;
 
-    public WalletServiceImpl(WalletDAO walletDAO){
-        this.walletDAO = walletDAO;
+    public WalletServiceImpl(WalletDAO walletDAO, BlockService blockService, TransactionService transactionService){
+        this.walletDAO = walletDAO; 
+        this.transactionService = transactionService;
+        this.blockService = blockService;
     }
     @Override
     public Wallet findById(String publicKey) throws Exception {
@@ -36,28 +50,53 @@ public class WalletServiceImpl implements WalletService{
         walletDAO.deleteById(publicKey);
     }
     @Override
-    public Wallet transfer(String fromPublicKey, String toPublicKey, double amount) throws Exception {
+    @Transactional
+    public Wallet createWallet() throws Exception {
+        Wallet newWallet = new Wallet(); 
+        newWallet.setBalance(500.0);
+        return walletDAO.save(newWallet);
+    }
+    @Override
+    @Transactional
+    public Transaction transfer(String fromPublicKey, String toPublicKey, double amount) throws Exception {
+
         Wallet fromWallet = walletDAO.findById(fromPublicKey);
-        Wallet toWallet = walletDAO.findById(toPublicKey);
-
-        if (fromWallet == null || toWallet == null) {
-            throw new Exception("L'un des wallets n'existe pas!");
-        }
-
-        if (amount <= 0) {
-            throw new Exception("Mais envoie quelque chose, sois pas nul!");
-        }
-
+        
         if (fromWallet.getBalance() < amount) {
-            throw new Exception("T'as pas d'argent, t'es naz!!");
+            throw new Exception("T'as pas d'argent (solde BDD) !! Solde: " + fromWallet.getBalance());
+        }
+        if (amount <= 0) {
+            throw new Exception("Montant invalide");
         }
 
+        CreateBlockRequest blockRequest = new CreateBlockRequest();
+        blockRequest.setData("Bloc pour la transaction de " + fromPublicKey);
+        blockRequest.setMinedBy(fromPublicKey);
+
+        Block minedBlock = blockService.save(blockRequest);
+        byte[] toAddressBytes = Base64.getDecoder().decode(toPublicKey);
+        Signature signature = Signature.getInstance("SHA256withDSA");
+
+        Transaction tx = new Transaction(
+            fromWallet,
+            toAddressBytes,
+            amount,
+            minedBlock,
+            signature
+        );
+        
+        Transaction savedTx = transactionService.save(tx);
+        
+        minedBlock.setData("Transaction ID: " + savedTx.getId().toString());
+        blockService.update(minedBlock); 
+
+        Wallet toWallet = walletDAO.findById(toPublicKey);
         fromWallet.setBalance(fromWallet.getBalance() - amount);
         toWallet.setBalance(toWallet.getBalance() + amount);
-
-        walletDAO.save(toWallet);
+        
         walletDAO.save(fromWallet);
+        walletDAO.save(toWallet);
 
-        return fromWallet;
+        return savedTx;
     }
 }

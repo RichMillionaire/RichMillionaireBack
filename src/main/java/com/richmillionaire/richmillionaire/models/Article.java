@@ -14,6 +14,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
@@ -46,7 +47,9 @@ public class Article {
     @Column(name = "photo_url", columnDefinition = "TEXT")
     private String photoUrl;
 
-
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "owner_wallet_id")
+    private Wallet owner;
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
         name = "article_categories",

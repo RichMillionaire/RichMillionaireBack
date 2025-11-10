@@ -8,7 +8,9 @@ import com.richmillionaire.richmillionaire.dao.WalletDAO;
 import com.richmillionaire.richmillionaire.models.Wallet;
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
 import jakarta.transaction.Transactional;
 
 @Repository
@@ -20,8 +22,7 @@ public class WalletDAOImpl implements WalletDAO{
 
     @Override
     public Wallet save(Wallet wallet) throws Exception {
-        entityManager.persist(wallet);
-        return wallet;
+        return entityManager.merge(wallet); 
     }
 
     @Override
@@ -32,7 +33,18 @@ public class WalletDAOImpl implements WalletDAO{
 
     @Override
     public Wallet findById(String publicKey) throws Exception {
-        return entityManager.find(Wallet.class, publicKey);
+        TypedQuery<Wallet> query = entityManager.createQuery(
+            "SELECT w FROM Wallet w WHERE w.publicKey = :key", 
+            Wallet.class
+        );
+        System.out.println("### DAO: Recherche de clé: [" + publicKey + "]");
+        query.setParameter("key", publicKey);
+        
+        try {
+            return query.getSingleResult();
+        } catch (NoResultException e) {
+            throw new Exception("Wallet non trouvé avec la clé publique: " + publicKey);
+        }
     }
 
     @Override
@@ -42,5 +54,4 @@ public class WalletDAOImpl implements WalletDAO{
             entityManager.remove(wallet);
         }
     }
-
 }

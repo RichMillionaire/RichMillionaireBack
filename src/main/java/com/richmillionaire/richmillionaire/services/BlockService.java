@@ -9,5 +9,6 @@ public interface BlockService {
     Block findById(int id) throws Exception;
     List<Block> findAll() throws Exception;
     Block save(CreateBlockRequest request) throws Exception;
-    void deleteById(int id) throws Exception;    
+    void deleteById(int id) throws Exception;
+    Block update(Block block) throws Exception;
 }

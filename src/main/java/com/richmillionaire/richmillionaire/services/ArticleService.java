@@ -5,12 +5,16 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Random;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -20,18 +24,31 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.richmillionaire.richmillionaire.dao.ArticleDao;
+import com.richmillionaire.richmillionaire.dao.WalletDAO;
 import com.richmillionaire.richmillionaire.dto.ArticleDto;
 import com.richmillionaire.richmillionaire.dto.ArticleMapper;
+import com.richmillionaire.richmillionaire.dto.BuyArticlesRequestDto;
+import com.richmillionaire.richmillionaire.dto.PurchaseResponseDto;
+import com.richmillionaire.richmillionaire.dto.PurchasedArticleCodeDto;
 import com.richmillionaire.richmillionaire.models.Article;
+import com.richmillionaire.richmillionaire.models.Transaction;
+import com.richmillionaire.richmillionaire.models.Wallet;
 
 @Service
 public class ArticleService {
 
     private final ArticleDao articleDao;
     private static final String UPLOAD_DIR = "upload/articles/";
+    private final WalletService walletService;
+    private final WalletDAO walletDao;
 
-    public ArticleService(ArticleDao articleDao) {
+    @Value("${app.richmillionaire.machine-wallet-public-key}")
+    private String machineWalletPublicKey;
+
+    public ArticleService(ArticleDao articleDao, WalletService walletService, WalletDAO walletDao) {
         this.articleDao = articleDao;
+        this.walletService = walletService;
+        this.walletDao = walletDao;
     }
 
     public Page<Article> findAll(Pageable pageable) {
@@ -229,5 +246,52 @@ public class ArticleService {
         } catch (IOException e) {
             System.err.println("Erreur lors de la recherche des fichiers pour l'article: " + articleId);
         }
+    }
+    public PurchaseResponseDto purchaseArticles(BuyArticlesRequestDto request) throws Exception {
+
+        Wallet buyerWallet = walletDao.findById(request.getBuyerPublicKey());
+
+        Wallet machineWallet = walletDao.findById(machineWalletPublicKey);
+
+        double totalPrice = 0.0;
+        List<Article> articlesToBuy = new ArrayList<>();
+
+        for (UUID articleId : request.getArticleIds()) {
+            Article article = articleDao.findById(articleId)
+                    .orElseThrow(() -> new RuntimeException("Article non trouvé: " + articleId));
+            totalPrice += article.getPrice();
+            articlesToBuy.add(article);
+        }
+
+        Transaction completedTransaction = walletService.transfer(
+            buyerWallet.getPublicKey(),
+            machineWallet.getPublicKey(),
+            totalPrice
+        );
+
+        List<PurchasedArticleCodeDto> purchasedCodes = new ArrayList<>();
+        Random random = new Random();
+
+        for (Article article : articlesToBuy) {
+            String code = String.format("%04d", random.nextInt(10000));
+            
+            purchasedCodes.add(new PurchasedArticleCodeDto(
+                article.getId(),
+                article.getName(),
+                code
+            ));
+
+            article.setOwner(buyerWallet);
+        }
+
+        articleDao.saveAll(articlesToBuy); 
+
+        PurchaseResponseDto response = new PurchaseResponseDto();
+        response.setMessage("Achat réussi ! " + articlesToBuy.size() + " articles transférés.");
+        response.setTransactionId(completedTransaction.getId());
+        response.setTotalPaid(totalPrice);
+        response.setPurchasedArticles(purchasedCodes);
+
+        return response;
     }
 }

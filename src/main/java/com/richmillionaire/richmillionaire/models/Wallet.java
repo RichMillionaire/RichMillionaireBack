@@ -14,10 +14,10 @@ import java.util.UUID;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.Getter;
 import lombok.Setter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Table;
 
@@ -34,10 +34,10 @@ public class Wallet {
     @GeneratedValue
     private UUID id;
 
-    @Column(nullable = false, length = 2048)
+    @Column(name = "public_key", nullable = false, length = 2048)
     private String publicKey;
-    //normalement pas stockée mais pour simplicité du projet letsgo (secu pas le + improtant la)
-    @Column(nullable = false, length = 2048)
+
+    @Column(name = "private_key", nullable = false, length = 2048)
     private String privateKey;
 
     @Column(nullable = false)
@@ -62,13 +62,13 @@ public class Wallet {
         this.publicKey = encoder.encodeToString(pubKey.getEncoded());
         this.privateKey = encoder.encodeToString(privKey.getEncoded());
     }
-
+    @JsonIgnore
     public PublicKey getDecodedPublicKey() throws GeneralSecurityException {
         byte[] keyBytes = Base64.getDecoder().decode(this.publicKey);
         KeyFactory keyFactory = KeyFactory.getInstance("DSA");
         return keyFactory.generatePublic(new java.security.spec.X509EncodedKeySpec(keyBytes));
     }
-
+    @JsonIgnore
     public PrivateKey getDecodedPrivateKey() throws GeneralSecurityException {
         byte[] keyBytes = Base64.getDecoder().decode(this.privateKey);
         KeyFactory keyFactory = KeyFactory.getInstance("DSA");
@@ -77,5 +77,5 @@ public class Wallet {
 
     public String toJson() {
         return new com.google.gson.Gson().toJson(this);
-    }
+    }    
 }

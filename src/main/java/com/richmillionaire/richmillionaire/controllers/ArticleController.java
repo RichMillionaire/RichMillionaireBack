@@ -25,6 +25,8 @@ import org.springframework.web.multipart.MultipartFile;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.richmillionaire.richmillionaire.dto.ApiResponse;
 import com.richmillionaire.richmillionaire.dto.ArticleDto;
+import com.richmillionaire.richmillionaire.dto.BuyArticlesRequestDto;
+import com.richmillionaire.richmillionaire.dto.PurchaseResponseDto;
 import com.richmillionaire.richmillionaire.models.Article;
 import com.richmillionaire.richmillionaire.security.HasRole;
 import com.richmillionaire.richmillionaire.services.ArticleService;
@@ -124,5 +126,15 @@ public class ArticleController {
     public ResponseEntity<ApiResponse<List<Article>>> getArticlesByCategory(@PathVariable UUID categoryId) {
         List<Article> articles = articleService.findByCategoryId(categoryId);
         return ResponseEntity.ok(ApiResponse.success("Articles par catégorie récupérés ✅", articles));
+    }
+
+    @PostMapping("/checkout")
+    public ResponseEntity<?> buyArticleList(@RequestBody BuyArticlesRequestDto request) {
+        try {
+            PurchaseResponseDto response = articleService.purchaseArticles(request);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 }

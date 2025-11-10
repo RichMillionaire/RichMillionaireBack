@@ -57,7 +57,7 @@ public class Transaction implements Serializable {
 
 
     @Column(nullable = false)
-    private Integer value;
+    private Double value;
 
     @Column(nullable = false)
     private String timestamp;
@@ -72,7 +72,7 @@ public class Transaction implements Serializable {
     @JoinColumn(name = "block_id", nullable = false)
     private Block block;
 
-    public Transaction(byte[] from, byte[] to, Integer value, byte[] signature, Block block, String timeStamp) {
+    public Transaction(byte[] from, byte[] to, Double value, byte[] signature, Block block, String timeStamp) {
 
         Base64.Encoder encoder = Base64.getEncoder();
         this.from = from;
@@ -86,7 +86,7 @@ public class Transaction implements Serializable {
         this.timestamp = timeStamp;
     }
     //Constructeur pour signer et créer une nouvelle trans  
-    public Transaction(Wallet fromWallet, byte[] toAddress, Integer value, Block block, Signature signing) throws InvalidKeyException, SignatureException, java.security.GeneralSecurityException
+    public Transaction(Wallet fromWallet, byte[] toAddress, Double value, Block block, Signature signing) throws InvalidKeyException, SignatureException, java.security.GeneralSecurityException
     {
         Base64.Encoder encoder = Base64.getEncoder();
         byte[] fromBytes = Base64.getDecoder().decode(fromWallet.getPublicKey());
