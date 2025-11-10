@@ -17,7 +17,6 @@ public class JacksonConfig {
             .featuresToDisable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
             .build();
         
-        // Ajouter le module Hibernate pour gérer les proxies et lazy loading
         Hibernate6Module hibernate6Module = new Hibernate6Module();
         hibernate6Module.configure(Hibernate6Module.Feature.FORCE_LAZY_LOADING, false);
         hibernate6Module.configure(Hibernate6Module.Feature.SERIALIZE_IDENTIFIER_FOR_LAZY_NOT_LOADED_OBJECTS, true);

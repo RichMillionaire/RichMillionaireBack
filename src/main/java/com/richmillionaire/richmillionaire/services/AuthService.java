@@ -47,8 +47,13 @@ public class AuthService {
         user.setUsername(request.getUsername());
         user.setEmail(request.getEmail());
         user.setPassword(hashedPassword);
+
         Role userRole = roleDao.findByName("USER")
-            .orElseThrow(() -> new Exception("Le rôle USER n'existe pas !"));
+            .orElseGet(() -> {
+                Role newRole = new Role();
+                newRole.setName("USER");
+                return roleDao.save(newRole);
+            });
 
         Set<Role> roles = new HashSet<>();
         roles.add(userRole);
