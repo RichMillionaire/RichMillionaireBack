@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
+import com.richmillionaire.richmillionaire.dao.RoleDao;
 import com.richmillionaire.richmillionaire.dao.UserDao;
 import com.richmillionaire.richmillionaire.dto.AuthResponse;
 import com.richmillionaire.richmillionaire.dto.LoginRequest;
@@ -21,9 +22,11 @@ public class AuthService {
 
     private final UserDao userDao;
     private final JwtUtil jwtUtil;
+    private final RoleDao roleDao;
 
-    public AuthService(UserDao userDao, JwtUtil jwtUtil) {
+    public AuthService(UserDao userDao, JwtUtil jwtUtil, RoleDao roleDao) {
         this.userDao = userDao;
+        this.roleDao = roleDao;
         this.jwtUtil = jwtUtil;
     }
 
@@ -44,7 +47,13 @@ public class AuthService {
         user.setUsername(request.getUsername());
         user.setEmail(request.getEmail());
         user.setPassword(hashedPassword);
-        user.setRoles(new HashSet<>()); // ajouter des rôles par défaut si nécessaire
+        Role userRole = roleDao.findByName("USER")
+            .orElseThrow(() -> new Exception("Le rôle USER n'existe pas !"));
+
+        Set<Role> roles = new HashSet<>();
+        roles.add(userRole);
+
+        user.setRoles(roles); 
 
         userDao.save(user);
     }
