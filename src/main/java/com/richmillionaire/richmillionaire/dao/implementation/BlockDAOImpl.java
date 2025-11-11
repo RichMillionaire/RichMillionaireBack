@@ -24,7 +24,7 @@ public class BlockDAOImpl implements BlockDAO {
 
     @Override
     public List<Block> findAll() {
-        return entityManager.createQuery("SELECT b FROM Block b", Block.class)
+        return entityManager.createQuery("SELECT b FROM Block b ORDER BY b.timeStamp DESC", Block.class)
                 .getResultList();
     }
 
