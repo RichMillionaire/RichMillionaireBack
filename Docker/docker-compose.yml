@@ -1,0 +1,59 @@
+version: "3.9"
+
+services:
+  database:
+    container_name: rich_millionaire_db
+    image: postgres:15
+    restart: always
+    env_file:
+      - .env
+    environment:
+      POSTGRES_USER: ${DATABASE_USER}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+      POSTGRES_DB: ${DATABASE_NAME}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./richmillionaire_backup.sql:/docker-entrypoint-initdb.d/richmillionaire.sql
+    networks:
+      - backend_net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DATABASE_USER} -d ${DATABASE_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    container_name: rich_millionaire_back
+    image: kikipaul/richmillionaire-backend:latest
+    depends_on:
+      database:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://database:5432/${DATABASE_NAME}
+      SPRING_DATASOURCE_USERNAME: ${DATABASE_USER}
+      SPRING_DATASOURCE_PASSWORD: ${DATABASE_PASSWORD}
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./upload:/app/upload
+    networks:
+      - backend_net
+    restart: unless-stopped
+
+  frontend:
+    container_name: rich_millionaire_front
+    image: kikipaul/richmillionaire-frontend:latest
+    ports:
+      - "4200:4200"
+    networks:
+      - backend_net
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+
+networks:
+  backend_net:
+    driver: bridge

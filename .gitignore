@@ -8,7 +8,6 @@ target/
 /src/main/resources/application.properties
 /src/main/resources/application-local.properties
 
-
 ### STS ###
 .apt_generated
 .classpath
@@ -34,6 +33,9 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
-### VS Code ###
-.env
 .vscode/
+
+.env
+**/.env
+
+!Docker/.env
