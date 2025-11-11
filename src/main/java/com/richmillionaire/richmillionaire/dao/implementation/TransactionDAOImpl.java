@@ -24,10 +24,12 @@ public class TransactionDAOImpl implements TransactionDAO{
         return transaction;
     }
 
-    @Override
+     @Override
     public List<Transaction> findAll() throws Exception {
-        return entityManager.createQuery("SELECT t FROM Transaction t", Transaction.class)
-                .getResultList();
+        return entityManager.createQuery(
+                "SELECT t FROM Transaction t ORDER BY t.id DESC", 
+                Transaction.class
+            ).getResultList();
     }
 
     @Override
